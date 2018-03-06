@@ -1,0 +1,309 @@
+================ Question 1=========================================================================
+
+Prove
+
+length (xs ++ ys) = length xs + length ys
+
+Proof:
+
+Induction on xs
+
+Base case: xs = []
+
+length (xs ++ ys)
+= {xs = []}
+length ([] ++ ys)
+= {Definition of ++}
+length ys
+= {Property of Integers}
+0 + length ys
+= {Definition of length}
+length [] + length ys
+= {xs = []}
+length xs + length ys
+
+Inductive case: xs = a:as
+
+length (xs ++ ys)
+= {xs = a:as}
+length ((a:as) ++ ys)
+= {Definition of ++}
+length (a : (as++ys))
+= {Definition of length}
+1 + length (as ++ ys)
+= {Induction hypothesis}
+1 + length as + length ys
+= {Associtivity of +}
+(1 + length as) + length ys
+= {Definition of length}
+length (a:as) + length ys
+= {xs = a:as}
+length xs + length ys
+
+Qed.
+
+====================================================================================================
+
+
+
+================ Question 2 ========================================================================
+
+Prove 
+
+length (reverse l) = length l
+
+Proof:
+
+Induction on l
+ 
+Base case: l = []
+
+length (reverse l)
+= {l = []}
+length (reverse [])
+= {Definition of reverse}
+length []
+= {l = []}
+length l
+
+Inductive case: l = x:xs
+
+length (reverse l)
+= {l = x:xs}
+length (reverse (x:xs))
+= {Definition of reverse}
+length (reverse xs ++ [x])
+= {Property proved in Question 1}
+length (reverse xs) ++ length [x]
+= {Inducion hypothesis}
+length xs + length [x]
+= {Commutativity of +}
+length [x] + length xs
+= {Definition of length}
+1 + length [] + length xs
+= {Definition of length}
+1 + length xs
+= {Definition of length}
+length (x:xs)
+= {l = x:xs}
+length l
+
+Qed.
+
+====================================================================================================
+
+
+
+================ Question 3 ========================================================================
+
+Prove 
+
+reverse (xs ++ ys) = reverse ys ++ reverse xs
+
+Proof:
+
+Induction on xs
+ 
+Base case: xs = []
+
+reverse (xs ++ ys)
+= {xs = []}
+reverse ([] ++ ys)
+= {Definition of ++}
+reverse ys
+= {Definition of ++}
+reverse ys ++ []
+= {Definition of reverse}
+reverse ys ++ reverse []
+= {xs = []}
+reverse ys ++ reverse xs
+
+Inductive case: xs = a:as
+
+reverse (xs ++ ys)
+= {xs = a:as}
+reverse ((a:as) ++ ys)
+= {Definition of ++}
+reverse (a : (as++ys))
+= {Definition of reverse}
+reverse (as++ys) ++ [a]
+= {Induction hypothesis}
+reverse ys ++ reverse as ++ reverse [a]
+= {Associativity of ++}
+reverse ys ++ (reverse as ++ reverse [a])
+= {Definition of reverse}
+reverse ys ++ reverse (a:as)
+= {x = a:as}
+reverse ys ++ reverse xs
+
+Qed.
+
+====================================================================================================
+
+
+
+================ Question 4 ========================================================================
+
+Prove 
+
+h . foldr g w = foldr f v
+
+where
+
+v = h w
+
+f x (h y) = h (g x y)
+
+Proof:
+
+Since both side are of the type [a] -> a, we perform induction on the argument xs
+and prove the following equation:
+
+(h . foldr g w) xs = foldr f v xs
+
+Base case: xs = []
+
+(h . foldr g w) xs
+= {xs = []}
+(h . foldr g w) []
+= {Definition of .}
+h $ foldr g w []
+= {Definition of foldr}
+h w
+= {v = h w}
+v
+= {Definition of foldr}
+foldr f v []
+= {xs = []}
+foldr f v xs
+
+Inductive case: xs = a:as
+
+(h . foldr g w) xs
+= {xs = a:as}
+(h . foldr g w) (a:as)
+= {Definition of .}
+h $ foldr g w (a:as)
+= {Definition of foldr}
+h $ g a (foldr g w as)
+= {f x (h y) = h (g x y)}
+f a (h (foldr g w as))
+= {Induction hypothesis}
+f a (foldr f v as)
+= {Definition of foldr}
+foldr f v (a:as)
+= {xs = a:as}
+foldr f v xs
+
+Qed.
+
+====================================================================================================
+
+
+
+================ Question 5 ========================================================================
+
+Prove
+
+filter p . filter q = filter (and p q)
+
+where
+
+and p q x = p x && q x
+
+Proof:
+
+Since both side are of the type [a] -> Bool, we perform induction on the argument xs
+and prove the following equation:
+
+(filter p . filter q) xs = filter (and p q) xs
+
+Base case: xs = []
+
+(filter p . filter q) xs
+= {xs = []}
+(filter p . filter q) []
+= {Definition of .}
+filter p $ filter q []
+= {Definition of filter}
+filter p []
+= {Definition of filter}
+[]
+= {Definition of filter}
+filter (and p q) []
+= {xs = []}
+filter (and p q) xs
+
+Inductive case: xs = a:as
+
+case 1: q a = False
+
+(filter p . filter q) xs
+= {xs = a:as}
+(filter p . filter q) (a:as)
+= {Defintion of .}
+filter p $ filter q (a:as)
+= {Definition of filter}
+{q a = False}
+filter p $ filter q as
+= {Definition of .}
+(filter p . filter q) as
+= {Induction hypothesis}
+filter (and p q) as
+= {Definition of filter}
+{and p q a = p a && q a = p a && False = False}
+filter (and p q) (a:as)
+= {xs = a:as}
+filter (and p q) xs
+
+case 2.1: q a = True, p a = False
+
+(filter p . filter q) xs
+= {xs = a:as}
+(filter p . filter q) (a:as)
+= {Defintion of .}
+filter p $ filter q (a:as)
+= {Definition of filter}
+{q a = True}
+filter p $ a ++ filter q as
+= {Definition of filter}
+{p a = False}
+filter p $ filter q as
+= {Definition of .}
+(filter p . filter q) as
+= {Induction hypothesis}
+filter (and p q) as
+= {Definition of filter}
+{and p q a = p a && q a = False && True = False}
+filter (and p q) (a:as)
+= {xs = a:as}
+filter (and p q) xs
+
+case 2.2: q a = True, p a = True
+
+(filter p . filter q) xs
+= {xs = a:as}
+(filter p . filter q) (a:as)
+= {Defintion of .}
+filter p $ filter q (a:as)
+= {Definition of filter}
+{q a = True}
+filter p $ [a] ++ filter q as
+= {Definition of filter}
+{p a = True}
+[a] ++ filter p $ filter q as
+= {Definition of .}
+[a] ++ (filter p . filter q) as
+= {Induction hypothesis}
+[a] ++ filter (and p q) as
+= {Definition of filter}
+{and p q a = p a && q a = True && True = True}
+filter (and p q) (a:as)
+= {xs = a:as}
+filter (and p q) xs
+
+Qed.
+
+====================================================================================================
+
+
